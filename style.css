@@ -1,0 +1,59 @@
+body{
+    background-color: #fcfcfc;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #70d8da; /* Light blue background */
+}
+
+th, td {
+    border: 1px solid #000000; /* Black border */
+    text-align: left;
+    padding: 8px;
+    color: #000000; /* Black text color */
+}
+
+th {
+    background-color: #AAD9BB; /* Light green background for table header */
+}
+
+td {
+    background-color: #D5F0C1; /* Light green background for table cells */
+}
+
+input[type="checkbox"]:checked {
+    background-color: #AAD9BB; /* Light green background for checked checkboxes */
+}
+
+.search-container {
+    float: right;
+    margin-bottom: 10px;
+}
+
+.search-container input[type=text] {
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 16px;
+    border: 1px solid #000000; /* Black border */
+    border-radius: 4px;
+    color: #000000; /* Black text color */
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 20px; /* Adjust margin as needed */
+}
+
+.button {
+    background-color: #ffffff; /* Light yellow background for button */
+    color: #000000; /* Black text color */
+    padding: 10px 20px;
+    border-color: #000000 0.2cm;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #bafa8a; /* Light green background on hover */
+}

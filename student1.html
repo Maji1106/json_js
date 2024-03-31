@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>รายชื่อการเข้าเรียน</h1>
+    
+    <!-- เพิ่มช่องค้นหาชื่อและรหัสประจำตัว -->
+    <div class="search-container">
+        <input type="text" placeholder="ค้นหาชื่อหรือรหัสประจำตัว" id="search-input">
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>รหัสประจำตัว</th>
+                <th>ชื่อ</th>
+                <th>สัปดาห์ 1</th>
+                <th>สัปดาห์ 2</th>
+            </tr>
+        </thead>
+        <tbody id="attendance-list"></tbody>
+    </table>
+    <div class="button-container">
+    <button class="button" onclick="submitAttendance()">ยืนยัน</button>
+    </div>
+    <script>
+        function loadAttendanceData() {
+            fetch('student_attendance.json')
+                .then(response => response.json())
+                .then(data => {
+                    const listContainer = document.getElementById('attendance-list');
+                    data.forEach(student => {
+                        const studentRow = document.createElement('tr');
+                        studentRow.innerHTML = `
+                            <td>${student['รหัสประจำตัว']}</td>
+                            <td>${student['ชื่อ']}</td>
+                            <td><input type="checkbox" name="week1_${student['รหัสประจำตัว']}"></td>
+                            <td><input type="checkbox" name="week2_${student['รหัสประจำตัว']}"></td>
+                        `;
+
+                        // เพิ่มการตรวจสอบเมื่อ checkbox ถูกคลิก
+                        studentRow.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.addEventListener('click', () => {
+                                if (checkbox.checked) {
+                                    checkbox.value = 'มาเรียน';
+                                } else {
+                                    checkbox.value = '';
+                                }
+                            });
+                        });
+
+                        listContainer.appendChild(studentRow);
+                    });
+                })
+                .catch(error => console.error('Error loading the data:', error));
+        }
+
+       function searchStudents() {
+    const input = document.getElementById('search-input');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('attendance-list');
+    const rows = table.getElementsByTagName('tr');
+
+    // วนลูปทุกแถวของตารางและซ่อนแถวที่ไม่ตรงกับการค้นหา
+    for (let i = 0; i < rows.length; i++) {
+        const idColumn = rows[i].getElementsByTagName('td')[0];
+        const nameColumn = rows[i].getElementsByTagName('td')[1];
+        const studentID = idColumn.textContent || idColumn.innerText;
+        const studentName = nameColumn.textContent || nameColumn.innerText;
+        if (studentID.toUpperCase().indexOf(filter) > -1 || studentName.toUpperCase().indexOf(filter) > -1) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+    }
+       function submitAttendance() {
+    const attendanceData = {};
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        attendanceData[checkbox.name] = checkbox.checked ? 'มาเรียน' : 'ไม่มาเรียน';
+    });
+
+    // แปลงข้อมูลเป็นรหัส JavaScript
+    const jsCode = `const attendanceData = ${JSON.stringify(attendanceData)};`;
+
+    // สร้างไฟล์ JavaScript โดยใช้ Blob
+    const blob = new Blob([jsCode], { type: 'text/javascript' });
+
+    // สร้าง URL สำหรับ Blob
+    const url = URL.createObjectURL(blob);
+
+    // สร้างลิงก์สำหรับดาวน์โหลดไฟล์ JavaScript
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'attendance_data.js';
+
+    // คลิกลิงก์เพื่อดาวน์โหลดไฟล์
+    link.click();
+
+    // คืนค่า URL และลิงก์
+    return { url, link };
+}
+
+
+
+        window.onload = function() {
+            loadAttendanceData();
+            document.getElementById('search-input').addEventListener('keyup', searchStudents);
+        };
+    </script>
+</body>
+</html>
